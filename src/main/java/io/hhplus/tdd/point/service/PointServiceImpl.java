@@ -54,8 +54,4 @@ public class PointServiceImpl implements PointService {
         pointHistoryTable.insert(id, amount, TransactionType.USE, savedUserPoint.updateMillis());
         return savedUserPoint;
     }
-
-
-    // 포인트 '충전/사용' 내역 조회
-
 }
