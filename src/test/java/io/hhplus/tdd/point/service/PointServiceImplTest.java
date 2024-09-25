@@ -3,6 +3,7 @@ package io.hhplus.tdd.point.service;
 import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.database.UserPointTable;
 import io.hhplus.tdd.point.domain.UserPoint;
+import io.hhplus.tdd.point.error.PointErrorMessage;
 import io.hhplus.tdd.point.validator.PointValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -13,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,6 +56,26 @@ class PointServiceImplTest {
             // Then
             assertThat(result.point()).isEqualTo(totalAmount);
         }
+
+        @Test
+        @DisplayName("포인트 충전 - 유효하지 않음")
+        void chargeTest_invalid() {
+            // Given
+            long id = 1L;
+            long baseAmount = 1000L;
+            long updateMillis = 1L;
+            long addAmount = 10000L;
+            UserPoint userPoint = new UserPoint(id, baseAmount, updateMillis);
+
+            when(userPointTable.selectById(id)).thenReturn(userPoint);
+
+            // When & Then
+            IllegalArgumentException result = assertThrows(IllegalArgumentException.class, () -> {
+                sut.charge(id, addAmount);
+            });
+
+            assertThat(result.getMessage()).isEqualTo(PointErrorMessage.EXCEED_MAX_POINT.getMessage());
+        }
     }
 
     @Nested
@@ -79,6 +101,26 @@ class PointServiceImplTest {
 
             // Then
             assertThat(result.point()).isEqualTo(totalAmount);
+        }
+
+        @Test
+        @DisplayName("포인트 사용 - 유효하지 않음")
+        void chargeTest_invalid() {
+            // Given
+            long id = 1L;
+            long baseAmount = 1000L;
+            long updateMillis = 1L;
+            long subAmount = 1500L;
+            UserPoint userPoint = new UserPoint(id, baseAmount, updateMillis);
+
+            when(userPointTable.selectById(id)).thenReturn(userPoint);
+
+            // When & Then
+            IllegalArgumentException result = assertThrows(IllegalArgumentException.class, () -> {
+                sut.use(id, subAmount);
+            });
+
+            assertThat(result.getMessage()).isEqualTo(PointErrorMessage.NOT_USED_POINT.getMessage());
         }
     }
 }
