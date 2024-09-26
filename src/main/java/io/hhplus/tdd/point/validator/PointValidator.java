@@ -1,6 +1,6 @@
 package io.hhplus.tdd.point.validator;
 
-import io.hhplus.tdd.point.domain.PointPolicy;
+import io.hhplus.tdd.point.entity.PointPolicy;
 import io.hhplus.tdd.point.error.PointErrorMessage;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +21,7 @@ public class PointValidator {
 
     public void validateId(Long id) {
         if (Objects.isNull(id)) {
-            throw new IllegalArgumentException(PointErrorMessage.NULL_ID.getMessage());
+            throw new IllegalArgumentException(PointErrorMessage.NOT_USED_ID.getMessage());
         }
     }
 

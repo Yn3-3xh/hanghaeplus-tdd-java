@@ -1,13 +1,14 @@
 package io.hhplus.tdd.point.controller;
 
-import io.hhplus.tdd.point.domain.PointHistory;
-import io.hhplus.tdd.point.domain.UserPoint;
+import io.hhplus.tdd.point.entity.PointHistory;
+import io.hhplus.tdd.point.entity.UserPoint;
 import io.hhplus.tdd.point.service.PointServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/point")
@@ -45,7 +46,7 @@ public class PointController {
      * TODO - 특정 유저의 포인트를 충전하는 기능을 작성해주세요.
      */
     @PatchMapping("{id}/charge")
-    public UserPoint charge(
+    public CompletableFuture<UserPoint> charge(
             @PathVariable long id,
             @RequestBody long amount
     ) {
@@ -56,7 +57,7 @@ public class PointController {
      * TODO - 특정 유저의 포인트를 사용하는 기능을 작성해주세요.
      */
     @PatchMapping("{id}/use")
-    public UserPoint use(
+    public CompletableFuture<UserPoint> use(
             @PathVariable long id,
             @RequestBody long amount
     ) {

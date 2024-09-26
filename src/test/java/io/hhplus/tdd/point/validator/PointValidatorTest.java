@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("PointValidator 단위테스트")
 class PointValidatorTest {
 
     private final PointValidator sut = new PointValidator();
@@ -43,7 +44,7 @@ class PointValidatorTest {
             });
 
             // then
-            assertThat(result.getMessage()).isEqualTo(PointErrorMessage.NULL_ID.getMessage());
+            assertThat(result.getMessage()).isEqualTo(PointErrorMessage.NOT_USED_ID.getMessage());
         }
     }
 

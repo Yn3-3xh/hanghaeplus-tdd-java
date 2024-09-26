@@ -1,4 +1,4 @@
-package io.hhplus.tdd.point.domain;
+package io.hhplus.tdd.point.entity;
 
 /**
  * 포인트 트랜잭션 종류

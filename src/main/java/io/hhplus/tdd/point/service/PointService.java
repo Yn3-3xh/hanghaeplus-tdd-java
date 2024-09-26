@@ -1,16 +1,17 @@
 package io.hhplus.tdd.point.service;
 
-import io.hhplus.tdd.point.domain.PointHistory;
-import io.hhplus.tdd.point.domain.UserPoint;
+import io.hhplus.tdd.point.entity.PointHistory;
+import io.hhplus.tdd.point.entity.UserPoint;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public interface PointService {
     UserPoint select(Long id);
 
     List<PointHistory> history(Long id);
 
-    UserPoint charge(Long id, Long amount);
+    CompletableFuture<UserPoint> charge(Long id, Long amount);
 
-    UserPoint use(Long id, Long amount);
+    CompletableFuture<UserPoint> use(Long id, Long amount);
 }

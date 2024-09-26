@@ -2,7 +2,7 @@ package io.hhplus.tdd.point.service;
 
 import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.database.UserPointTable;
-import io.hhplus.tdd.point.domain.UserPoint;
+import io.hhplus.tdd.point.entity.UserPoint;
 import io.hhplus.tdd.point.error.PointErrorMessage;
 import io.hhplus.tdd.point.validator.PointValidator;
 import org.junit.jupiter.api.DisplayName;
@@ -13,11 +13,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.locks.ReentrantLock;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("PointService 단위테스트")
 class PointServiceImplTest {
 
     @InjectMocks
@@ -31,6 +35,9 @@ class PointServiceImplTest {
 
     @Mock
     private PointValidator pointValidator;
+
+    @Mock
+    private ReentrantLock lock;
 
     @Nested
     @DisplayName("포인트 충전")
@@ -51,7 +58,7 @@ class PointServiceImplTest {
             when(userPointTable.insertOrUpdate(id, totalAmount)).thenReturn(savedUserPoint);
 
             // When
-            UserPoint result = sut.charge(id, addAmount);
+            UserPoint result = sut.charge(id, addAmount).join();
 
             // Then
             assertThat(result.point()).isEqualTo(totalAmount);
@@ -69,12 +76,15 @@ class PointServiceImplTest {
 
             when(userPointTable.selectById(id)).thenReturn(userPoint);
 
-            // When & Then
-            IllegalArgumentException result = assertThrows(IllegalArgumentException.class, () -> {
-                sut.charge(id, addAmount);
+            // When
+            CompletionException result = assertThrows(CompletionException.class, () -> {
+                sut.charge(id, addAmount).join();
             });
 
-            assertThat(result.getMessage()).isEqualTo(PointErrorMessage.EXCEED_MAX_POINT.getMessage());
+            // Then
+            Throwable cause = result.getCause();
+            assertThat(cause).isInstanceOf(IllegalArgumentException.class);
+            assertThat(cause.getMessage()).isEqualTo(PointErrorMessage.EXCEED_MAX_POINT.getMessage());
         }
     }
 
@@ -97,7 +107,7 @@ class PointServiceImplTest {
             when(userPointTable.insertOrUpdate(id, totalAmount)).thenReturn(savedUserPoint);
 
             // When
-            UserPoint result = sut.use(id, subAmount);
+            UserPoint result = sut.use(id, subAmount).join();
 
             // Then
             assertThat(result.point()).isEqualTo(totalAmount);
@@ -115,12 +125,15 @@ class PointServiceImplTest {
 
             when(userPointTable.selectById(id)).thenReturn(userPoint);
 
-            // When & Then
-            IllegalArgumentException result = assertThrows(IllegalArgumentException.class, () -> {
-                sut.use(id, subAmount);
+            // When
+            CompletionException result = assertThrows(CompletionException.class, () -> {
+                sut.use(id, subAmount).join();
             });
 
-            assertThat(result.getMessage()).isEqualTo(PointErrorMessage.NOT_USED_POINT.getMessage());
+            // Then
+            Throwable cause = result.getCause();
+            assertThat(cause).isInstanceOf(IllegalArgumentException.class);
+            assertThat(cause.getMessage()).isEqualTo(PointErrorMessage.NOT_USED_POINT.getMessage());
         }
     }
 }

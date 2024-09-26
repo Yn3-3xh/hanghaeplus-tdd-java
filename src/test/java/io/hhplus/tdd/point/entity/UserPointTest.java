@@ -1,4 +1,4 @@
-package io.hhplus.tdd.point.domain;
+package io.hhplus.tdd.point.entity;
 
 import io.hhplus.tdd.point.error.PointErrorMessage;
 import org.junit.jupiter.api.DisplayName;
@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@DisplayName("UserPoint 단위테스트")
 public class UserPointTest {
 
     @Nested
